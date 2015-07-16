@@ -1,0 +1,17 @@
+#!/usr/bin/env bash
+
+if [ -z "$1" ]; then
+  echo 'Please specify your database'
+  exit 1
+fi
+
+without='postgres mysql sqlite'
+without=$(echo "${without}" | sed "s/$1//g")
+
+export RAILS_ENV=production
+
+bundle install --deployment --without development test $without
+
+cp -v config/database.yml.example.$1 config/database.yml
+cp -v config/cas.yml.example config/cas.yml
+
